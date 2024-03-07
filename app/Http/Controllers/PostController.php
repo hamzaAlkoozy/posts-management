@@ -14,7 +14,14 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        return Post::create($request->all());
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+            'category' => 'required|max:255',
+            'publication_date' => 'required|date',
+            'description' => 'required',
+        ]);
+
+        return Post::create($validatedData);
     }
 
     public function show(Post $post)
@@ -24,7 +31,14 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
-        $post->update($request->all());
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+            'category' => 'required|max:255',
+            'publication_date' => 'required|date',
+            'description' => 'required',
+        ]);
+
+        $post->update($validatedData);
         return $post;
     }
 
