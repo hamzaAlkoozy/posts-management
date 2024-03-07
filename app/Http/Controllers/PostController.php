@@ -14,11 +14,13 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
+
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'category' => 'required|max:255',
             'publication_date' => 'required|date',
             'description' => 'required',
+            'user_id' => 'required|exists:users,id'
         ]);
 
         return Post::create($validatedData);
@@ -31,11 +33,14 @@ class PostController extends Controller
 
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
+
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'category' => 'required|max:255',
             'publication_date' => 'required|date',
             'description' => 'required',
+            'user_id' => 'required|exists:users,id'
         ]);
 
         $post->update($validatedData);
@@ -44,6 +49,8 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
+
         $post->delete();
         return response()->json(null, 204);
     }
