@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Laravel 9 vite with react</title>
     @viteReactRefresh
-    @vite('resources/js/app.jsx')
+    @vite('resources/css/app.css')
+    @vite('resources/js/index.jsx')
 </head>
 <body>
 <div id="app"></div>
