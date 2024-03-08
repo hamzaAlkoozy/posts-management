@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -14,14 +15,14 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             'category' => 'required|max:255',
             'publication_date' => 'required|date',
             'description' => 'required',
-            'user_id' => 'required|exists:users,id'
         ]);
+
+        $validatedData['user_id'] = Auth::id();
 
         return Post::create($validatedData);
     }

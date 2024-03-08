@@ -12,6 +12,7 @@ export function AuthContextProvider(props) {
     const initialState = false;
     const [isAuthenticated, setIsAuthenticated] = useState(initialState);
 
+    // TODO -hamza fix - if loggedin isAuthenticated is false on visiting /create-post
     useEffect(() => {
         const token = localStorage.getItem('api-token');
         if (token) {
