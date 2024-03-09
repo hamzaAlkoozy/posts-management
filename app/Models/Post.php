@@ -9,5 +9,13 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'category', 'publication_date', 'description', 'user_id'];
+    public $fullImageUrl;
+
+    protected $appends = ['full_image_url'];
+    protected $fillable = ['title', 'category', 'publication_date', 'description', 'image' ,'user_id'];
+
+    public function getFullImageUrlAttribute()
+    {
+        return $this->image ? asset('public/storage/' . $this->image) : null;
+    }
 }
