@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 import CreatePost from './CreatePost';
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
+import {toast} from "react-toastify";
 
 function EditPostPage() {
     // TODO -hamza fix
@@ -34,13 +35,16 @@ function EditPostPage() {
                     setIsLoading(false);
                     // TODO -hamza return to view post page
                 } else {
-                    // Show error as message
-                    // TODO -hamza client side validation - take error messages from response and show them
-                    const data = await response.json();
-                    console.error('Post edit failed', data);
+                    toast.error('Unable to edit the post. Please try again.', {
+                        position: "top-center",
+                        autoClose: 2000
+                    });
                 }
             } catch (error) {
-                console.error('An error occurred while creating the post:', error);
+                toast.error('Unable to edit the post. Please try again.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
             }
         }
 

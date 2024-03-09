@@ -3,6 +3,9 @@ import useConditionalRedirect from '../helpers/useConditionalRedirect';
 import {useNavigate} from "react-router-dom"
 import * as Yup from 'yup';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const schema = Yup.object().shape({
     title: Yup.string().required(),
     category: Yup.string().required(),
@@ -69,9 +72,12 @@ function CreatePost({ post }) {
             return; // return early if validation fails
         }
 
-        // Set the method and URL based on whether we're creating or editing a post
+        // Set the method, URL, success message based on whether we're creating or editing a post
+        // TODO -hamza need refactoring LATER
         const method = post ? 'PATCH' : 'POST';
         const url = post ? `/api/posts/${post.id}` : '/api/posts';
+        const successMessage = post ? 'Post updated successfully!' : 'Post created successfully!';
+        const errorMessage = post ? 'Unable to create the post. Please try again.' : 'Unable to update the post. Please try again.';
 
         try {
             const apiToken = localStorage.getItem('api-token');
@@ -91,12 +97,17 @@ function CreatePost({ post }) {
             });
 
             if (response.ok) {
-                // If post is modified redirect ot i
                 const data = await response.json();
+
+                // Send successful message
+                toast.success(successMessage, {
+                    position: "top-center",
+                    autoClose: 2000
+                });
+
                 navigate(`/view-post/${data.id}`);
             } else {
                 // Show error as message
-                // TODO -hamza client side validation - take error messages from response and show them
                 const data = await response.json();
                 let errorString = '';
                 if (data.errors) {
@@ -107,11 +118,13 @@ function CreatePost({ post }) {
                     errorString = data.message;
                 }
 
-                console.error('Post creation failed', data);
                 setErrorMessage(errorString.trim());
             }
         } catch (error) {
-            console.error('An error occurred while creating the post:', error);
+            toast.error(errorMessage, {
+                position: "top-center",
+                autoClose: 2000
+            });
         }
     };
 

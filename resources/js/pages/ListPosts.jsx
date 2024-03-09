@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import PostList from "../posts/PostList";
+import {toast} from "react-toastify";
 
 function ListPostsPage() {
     // TODO -hamza fix
@@ -42,12 +43,16 @@ function ListPostsPage() {
                     setTotalPages(data.last_page);
                     setIsLoading(false);
                 } else {
-                    const data = await response.json();
-                    // TODO -hamza client side validation - take error messages from response and show them
-                    console.error(data);
+                    toast.error('Unable to fetch posts. Please try again.', {
+                        position: "top-center",
+                        autoClose: 2000
+                    });
                 }
             } catch (error) {
-                console.error('Error fetching posts data:', error);
+                toast.error('Unable to fetch posts. Please try again.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
             }
         }
 

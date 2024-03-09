@@ -3,6 +3,7 @@ import {useParams} from "react-router-dom";
 import NotFound from "./NotFound";
 import PostItem from "../posts/PostItem";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
+import {toast} from "react-toastify";
 
 const ViewPostPage = () => {
     // TODO -hamza fix
@@ -34,13 +35,13 @@ const ViewPostPage = () => {
                     setPost(data);
                     setIsLoading(false);
                 } else {
-                    const data = await response.json();
-                    // TODO -hamza client side validation - take error messages from response and show them
-                    console.error(data);
                     setNotFound(true);
                 }
             } catch (error) {
-                console.error('Error fetching posts data:', error);
+                toast.error('Unable to fetch post. Please try again.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
             }
         }
 

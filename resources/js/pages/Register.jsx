@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthContext from "../store/auth-context";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
 import * as Yup from 'yup';
+import {toast} from "react-toastify";
 
 
 // TODO -hamza fix password confirmation not working
@@ -10,9 +11,10 @@ const schema = Yup.object().shape({
     name: Yup.string().required(),
     email: Yup.string().email().required(),
     password: Yup.string().min(8).required(),
-    passwordConfirmation: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
-        .required(),
+    passwordConfirmation: Yup.string().min(8).required(),
+    // passwordConfirmation: Yup.string()
+    //     .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    //     .required(),
 });
 
 
@@ -62,43 +64,53 @@ function Register() {
             return; // return early if validation fails
         }
 
-        const response = await fetch('api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password,
-                password_confirmation: passwordConfirmation,
-            }),
-        });
+        try {
+            const response = await fetch('api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    password_confirmation: passwordConfirmation,
+                }),
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
-            // Handle successful registration here
-            console.log('Registration successful:', data);
-            localStorage.setItem('api-token', data.access_token); // Store the token
-            authContext.login();
-            navigate('/');
-        } else {
-            // Handle errors here
-            console.log('Registration failed:', data);
-            let errorString = '';
-            if (data.errors) {
-                for (let field in data.errors) {
-                    errorString += `${data.errors[field].join(', ')} \n`;
+            if (response.ok) {
+                // Handle successful registration here
+                localStorage.setItem('api-token', data.access_token); // Store the token
+                authContext.login();
+
+                // Send successful message
+                toast.success('Registration successful! You are now logged in.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
+
+                navigate('/');
+            } else {
+                // Handle errors here
+                let errorString = '';
+                if (data.errors) {
+                    for (let field in data.errors) {
+                        errorString += `${data.errors[field].join(', ')} \n`;
+                    }
+                } else if (data.message) {
+                    errorString = data.message;
                 }
-            } else if (data.message) {
-                errorString = data.message;
+
+                setErrorMessage(errorString.trim());
             }
-
-            console.log(data.errors);
-
-            setErrorMessage(errorString.trim());
+        } catch (error) {
+            toast.error('Registration failed, Please try again later', {
+                position: "top-center",
+                autoClose: 2000
+            });
         }
     };
 
