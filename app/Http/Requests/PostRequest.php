@@ -21,11 +21,19 @@ class PostRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'title' => 'required|max:255',
             'category' => 'required|max:255',
             'publication_date' => 'required|date',
             'description' => 'required',
+            'image' => 'image|max:2048|mimes:jpg,png'
         ];
+
+        // Image is required ONLY on creation
+        if ($this->getMethod() == 'POST') {
+            $rules['image'] = 'required|' . $rules['image'];
+        }
+
+        return $rules;
     }
 }

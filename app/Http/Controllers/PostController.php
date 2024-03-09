@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
-use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -17,19 +17,25 @@ class PostController extends Controller
         return Post::where('user_id', Auth::id())->paginate($postsPerPage);
     }
 
-    public function store(PostRequest $request)
-    {
-        $validatedData = $request->validated();
-        $validatedData['user_id'] = Auth::id();
-
-        return Post::create($validatedData);
-    }
-
     public function show(Post $post)
     {
         $this->authorize('show', $post);
 
         return $post;
+    }
+
+    public function store(PostRequest $request)
+    {
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = Auth::id();
+
+        // Handle the user upload of the image
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images', 'public');
+            $validatedData['image'] = $path;
+        }
+
+        return Post::create($validatedData);
     }
 
     public function update(PostRequest $request, Post $post)
@@ -39,6 +45,17 @@ class PostController extends Controller
         $validatedData = $request->validated();
         $validatedData['user_id'] = Auth::id();
 
+        // Handle the user upload of the image
+        if ($request->hasFile('image')) {
+            // Delete the old image from the filesystem
+            if ($post->image) {
+                Storage::delete('public/' . $post->image);
+            }
+
+            $path = $request->file('image')->store('images', 'public');
+            $validatedData['image'] = $path;
+        }
+
         $post->update($validatedData);
         return $post;
     }
@@ -46,6 +63,11 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $this->authorize('delete', $post);
+
+        // Delete the image from the filesystem
+        if ($post->image) {
+            Storage::delete('public/' . $post->image);
+        }
 
         $post->delete();
         return response()->json(null, 204);

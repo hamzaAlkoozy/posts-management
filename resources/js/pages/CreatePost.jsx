@@ -12,6 +12,15 @@ const schema = Yup.object().shape({
     category: Yup.string().required(),
     publicationDate: Yup.date().required(),
     description: Yup.string().required(),
+    image: Yup.mixed().required().test(
+        "fileSize",
+        "File too large",
+        value => value && value.size <= 2048 * 1024 // 2MB
+    ).test(
+        "fileFormat",
+        "Unsupported Format",
+        value => value && ['image/jpg', 'image/jpeg', 'image/png'].includes(value.type)
+    )
 });
 
 
@@ -23,6 +32,7 @@ function CreatePost({post}) {
     const [category, setCategory] = useState('');
     const [publicationDate, setPublicationDate] = useState('');
     const [description, setDescription] = useState('');
+    const [image, setImage] = useState('');
 
     const [errorMessage, setErrorMessage] = useState(null);
 
@@ -73,9 +83,23 @@ function CreatePost({post}) {
             return; // return early if validation fails
         }
 
+        const postFormData = new FormData();
+        postFormData.append('title', title);
+        postFormData.append('category', category);
+        postFormData.append('publication_date', publicationDate);
+        postFormData.append('description', description);
+
+        if (post) {
+            postFormData.append('_method', 'PATCH');
+        }
+        // image is optional
+        if (image) {
+            postFormData.append('image', image);
+        }
+
         // Set the method, URL, success message based on whether we're creating or editing a post
         // TODO -hamza need refactoring LATER
-        const method = post ? 'PATCH' : 'POST';
+        const method = 'POST';
         const url = post ? `/api/posts/${post.id}` : '/api/posts';
         const successMessage = post ? 'Post updated successfully!' : 'Post created successfully!';
         const errorMessage = post ? 'Unable to create the post. Please try again.' : 'Unable to update the post. Please try again.';
@@ -85,16 +109,11 @@ function CreatePost({post}) {
             const response = await fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json',
+                    // Content type is by default to multipart/form-data because we are using FormData
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${apiToken}`
                 },
-                body: JSON.stringify({
-                    title,
-                    category,
-                    publication_date: publicationDate,
-                    description
-                })
+                body: postFormData
             });
 
             if (response.ok) {
@@ -185,6 +204,22 @@ function CreatePost({post}) {
                                 }}
                             />
                         </div>
+
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publication_date">
+                                Thumbnail
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="image"
+                                type="file"
+                                onChange={(e) => {
+                                    setImage(e.target.files[0]);
+                                    validateInput(e.target.files[0], 'image');
+                                }}
+                            />
+                        </div>
+
                         <div className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                                 Description

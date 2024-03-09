@@ -12,6 +12,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // TODO -hamza make two fixed emails like
+        //  hamza@gmail.com
+        //  john@gmail.com
         User::factory(2)->create();
     }
 }
