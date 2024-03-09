@@ -1,0 +1,35 @@
+.navLink {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    padding: 10px;
+}
+
+.navLink:hover {
+    color: #ddd;
+    background-color: #007BFF;
+}
+
+.loginLink {
+    color: #fff;
+    background-color: #007BFF;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.loginLink:hover {
+    color: #007BFF;
+    background-color: #fff;
+}
+
+.registerLink {
+    color: #fff;
+    background-color: #28a745;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.registerLink:hover {
+    color: #28a745;
+    background-color: #fff;
+}

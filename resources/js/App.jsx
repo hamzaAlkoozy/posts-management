@@ -2,7 +2,7 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Layout from './layout/Layout';
 import CreatePost from './pages/CreatePost';
 import ListPostsPage from './pages/ListPosts';
-import Login from './pages/Login';
+import LoginPage from './pages/Login';
 import Register from './pages/Register';
 
 import {AuthContextProvider} from "./store/auth-context";
@@ -24,7 +24,7 @@ function App() {
                         <Route path="/create-post" element={<CreatePost/>}/>
                         <Route path="/view-post/:id" element={<ViewPostPage/>}/>
                         <Route path="/edit-post/:id" element={<EditPostPage/>}/>
-                        <Route path="/login" element={<Login/>}/>
+                        <Route path="/login" element={<LoginPage/>}/>
                         <Route path="/register" element={<Register/>}/>
                         <Route path="/" element={<Dashboard/>}/>
                         <Route path="*" element={<NotFound/>}/>

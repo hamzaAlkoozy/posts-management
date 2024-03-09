@@ -3,25 +3,33 @@ import React, {useContext} from 'react';
 import {Link} from 'react-router-dom';
 import AuthContext from "../store/auth-context";
 
+import classes from "./Navigation.module.css";
+
 const Navigation = () => {
     const authContext = useContext(AuthContext);
 
     return (
-        <nav className="bg-blue-500 p-4 text-white">
-            <ul className="flex space-x-4">
+        <nav className="bg-blue-500 p-4">
+            <div className="flex justify-between">
                 {authContext.isAuthenticated ? (
                     <>
-                        <li><Link to="/create-post">Create Post</Link></li>
-                        <li><Link to="/list-posts">List Posts</Link></li>
-                        <li onClick={authContext.logout}><Link to="/login">Logout</Link></li>
+                        <ul className="flex space-x-4">
+                            <li><Link className={classes.navLink} to="/create-post">Create Post</Link></li>
+                            <li><Link className={classes.navLink} to="/list-posts">List Posts</Link></li>
+                        </ul>
+                        <ul className="flex space-x-4">
+                            <li onClick={authContext.logout}><Link className={classes.loginLink} to="/login">Logout</Link></li>
+                        </ul>
                     </>
                 ) : (
                     <>
-                    <li><Link to="/login">Login</Link></li>
-                    <li><Link to="/register">Register</Link></li>
+                        <ul className="flex space-x-4">
+                            <li><Link className={classes.loginLink} to="/login">Login</Link></li>
+                            <li><Link className={classes.registerLink} to="/register">Register</Link></li>
+                        </ul>
                     </>
-                    )}
-            </ul>
+                )}
+            </div>
         </nav>
     );
 };

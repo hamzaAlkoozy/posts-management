@@ -4,6 +4,7 @@ import NotFound from "./NotFound";
 import PostItem from "../posts/PostItem";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
 import {toast} from "react-toastify";
+import {Helmet} from "react-helmet";
 
 const ViewPostPage = () => {
     // TODO -hamza fix
@@ -59,7 +60,12 @@ const ViewPostPage = () => {
     }
 
     return (
-        <PostItem item={post} showViewButton={false} showDescription={true}/>
+        <>
+            <Helmet>
+                <title>{post.title}</title>
+            </Helmet>
+            <PostItem item={post} showViewButton={false} showDescription={true}/>
+        </>
     );
 };
 
