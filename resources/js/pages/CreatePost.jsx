@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import useConditionalRedirect from '../helpers/useConditionalRedirect';
 import {useNavigate} from "react-router-dom"
 
-function CreatePost() {
+function CreatePost({ post }) {
     useConditionalRedirect('/login', true);
 
     const navigate = useNavigate();
@@ -12,6 +12,17 @@ function CreatePost() {
     const publicationDateRef = useRef();
     const descriptionRef = useRef();
 
+    // When modifying post - fill inputs with post values
+    useEffect(() => {
+        if (post) {
+            console.log(post);
+            titleRef.current.value = post.title;
+            categoryRef.current.value = post.category;
+            publicationDateRef.current.value = post.publication_date;
+            descriptionRef.current.value = post.description;
+        }
+    }, [post]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -20,10 +31,14 @@ function CreatePost() {
         const publication_date = publicationDateRef.current.value;
         const description = descriptionRef.current.value;
 
+        // Set the method and URL based on whether we're creating or editing a post
+        const method = post ? 'PATCH' : 'POST';
+        const url = post ? `/api/posts/${post.id}` : '/api/posts';
+
         try {
             const apiToken = localStorage.getItem('api-token');
-            const response = await fetch('/api/posts', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -38,13 +53,14 @@ function CreatePost() {
             });
 
             if (response.ok) {
-                // Post creation successful, navigate to list post
-                navigate('/list-posts');
+                // If post is modified redirect ot i
+                const data = await response.json();
+                navigate(`/view-post/${data.id}`);
             } else {
                 // Show error as message
                 // TODO -hamza client side validation - take error messages from response and show them
                 const data = await response.json();
-                console.error('Post creation failed');
+                console.error('Post creation failed', data);
             }
         } catch (error) {
             console.error('An error occurred while creating the post:', error);
@@ -105,7 +121,7 @@ function CreatePost() {
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit">
-                        Create Post
+                        {post ? 'Update Post' : 'Create Post'}
                     </button>
                 </div>
             </form>

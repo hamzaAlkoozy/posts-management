@@ -1,21 +1,25 @@
+import {useState, useEffect} from "react";
+import {useParams} from "react-router-dom";
+import NotFound from "./NotFound";
+import PostItem from "../posts/PostItem";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
-import {useEffect, useState} from "react";
-import PostList from "../posts/PostList";
 
-function ListPostsPage() {
+const ViewPostPage = () => {
     useConditionalRedirect('/login', true);
 
-    const [posts, setPosts] = useState([]);
+    const { id } = useParams();
+    const [post, setPost] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
-    // Fetch posts from API
+    // Logic
     useEffect(() => {
         setIsLoading(true);
 
-        const fetchPosts = async () => {
+        const getPost = async () => {
             try {
                 const apiToken = localStorage.getItem('api-token');
-                const response = await fetch('/api/posts', {
+                const response = await fetch(`/api/posts/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -25,35 +29,36 @@ function ListPostsPage() {
                 });
 
                 if (response.ok) {
-                    // Post creation successful, navigate to list post
                     const data = await response.json();
-                    setPosts(data);
+                    setPost(data);
                     setIsLoading(false);
                 } else {
                     const data = await response.json();
                     // TODO -hamza client side validation - take error messages from response and show them
-                    // console.error('Error fetching posts data');
                     console.error(data);
+                    setNotFound(true);
                 }
             } catch (error) {
                 console.error('Error fetching posts data:', error);
             }
         }
 
-        fetchPosts();
+        getPost();
 
-    }, []);
+    }, [id]);
 
+    if (notFound) {
+        return <NotFound/>;
+    }
+    // View
     if (isLoading) {
-        return (
-            <div>
-                <p>Loading.....</p>
-            </div>
-        );
-    } else {
-        return <PostList posts={posts} />;
+        // TODO -hamza show spinner instead
+        return <div>Loading...</div>;
     }
 
-}
+    return (
+        <PostItem item={post} showViewButton={false} showDescription={true}/>
+    );
+};
 
-export default ListPostsPage;
+export default ViewPostPage;
