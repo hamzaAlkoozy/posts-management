@@ -3,6 +3,7 @@ import AuthContext from "../store/auth-context";
 import {useNavigate} from "react-router-dom";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
 import * as Yup from 'yup';
+import {toast} from "react-toastify";
 
 const schema = Yup.object().shape({
     email: Yup.string().email().required(),
@@ -50,39 +51,51 @@ function Login() {
             return; // return early if validation fails
         }
 
-        const response = await fetch('api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                email,
-                password,
-            }),
-        });
+        try {
+            const response = await fetch('api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (response.ok) {
-            // Handle successful registration here
-            console.log('Login successful:', data);
-            localStorage.setItem('api-token', data.access_token); // Store the token
-            authContext.login();
-            navigate('/');
-        } else {
-            // Handle errors here
-            console.log('Login failed:', data);
-            let errorString = '';
-            if (data.errors) {
-                for (let field in data.errors) {
-                    errorString += `${data.errors[field].join(', ')} \n`;
+            if (response.ok) {
+                // Handle successful registration here
+                localStorage.setItem('api-token', data.access_token); // Store the token
+                authContext.login();
+
+                // Send successful message
+                toast.success('Welcome back! You have successfully logged in.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
+
+                navigate('/');
+            } else {
+                // Handle errors here
+                let errorString = '';
+                if (data.errors) {
+                    for (let field in data.errors) {
+                        errorString += `${data.errors[field].join(', ')} \n`;
+                    }
+                } else if (data.message) {
+                    errorString = data.message;
                 }
-            } else if (data.message) {
-                errorString = data.message;
-            }
 
-            setErrorMessage(errorString.trim());
+                setErrorMessage(errorString.trim());
+            }
+        } catch (error) {
+            toast.error('Login failed, Please try again later', {
+                position: "top-center",
+                autoClose: 2000
+            });
         }
     };
 

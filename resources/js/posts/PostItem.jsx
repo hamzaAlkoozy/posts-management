@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Backdrop from "../ui/Backdrop";
 import DeleteModal from "../ui/DeleteModal";
+import {toast} from "react-toastify";
 
 function PostItem ({ item, showViewButton = true, showDescription = false }) {
     const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false)
@@ -22,17 +23,25 @@ function PostItem ({ item, showViewButton = true, showDescription = false }) {
             });
 
             if (response.status === 204) {
-                // Post deletion successful, navigate to list post
-                // TODO -hamza show success message
+                // Send successful message
+                toast.success('Post is deleted successfully!', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
+
                 navigate('/');
-                console.log(`Post deleted successfully`);
             } else {
-                const errorData = await response.json();
-                // TODO -hamza client side validation - take error messages from response and show them
-                console.error('Error deleting post: ', errorData);
+                toast.error('Unable to delete the post. Please try again.', {
+                    position: "top-center",
+                    autoClose: 2000
+                });
+
             }
         } catch (error) {
-            console.error('Error fetching posts data:', error);
+            toast.error('Unable to delete the post. Please try again.', {
+                position: "top-center",
+                autoClose: 2000
+            });
         }
     }
 

@@ -10,6 +10,9 @@ import {AuthContextProvider} from "./store/auth-context";
 import NotFound from './pages/NotFound';
 import ViewPostPage from "./pages/ViewPost";
 import EditPostPage from "./pages/EditPost";
+import Dashboard from "./pages/Dashboard";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     return (
@@ -23,9 +26,10 @@ function App() {
                         <Route path="/edit-post/:id" element={<EditPostPage/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
-                        <Route path="/" element={<div><h1>Welcome Admin</h1></div>}/>
+                        <Route path="/" element={<Dashboard/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Routes>
+                    <ToastContainer />
                 </Layout>
             </BrowserRouter>
         </AuthContextProvider>
