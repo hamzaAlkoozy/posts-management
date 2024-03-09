@@ -1,10 +1,11 @@
-import { useRef, useEffect } from 'react';
+import React, {useRef, useEffect, useState} from 'react';
 import useConditionalRedirect from '../helpers/useConditionalRedirect';
 import {useNavigate} from "react-router-dom"
 
 function CreatePost({ post }) {
     // TODO -hamza fix
     // useConditionalRedirect('/login', true);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const navigate = useNavigate();
 
@@ -61,7 +62,17 @@ function CreatePost({ post }) {
                 // Show error as message
                 // TODO -hamza client side validation - take error messages from response and show them
                 const data = await response.json();
+                let errorString = '';
+                if (data.errors) {
+                    for (let field in data.errors) {
+                        errorString += `${data.errors[field].join(', ')} \n`;
+                    }
+                } else if (data.message) {
+                    errorString = data.message;
+                }
+
                 console.error('Post creation failed', data);
+                setErrorMessage(errorString.trim());
             }
         } catch (error) {
             console.error('An error occurred while creating the post:', error);
@@ -80,7 +91,6 @@ function CreatePost({ post }) {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="title"
                         type="text"
-                        required="required"
                     />
                 </div>
                 <div className="mb-4">
@@ -92,7 +102,6 @@ function CreatePost({ post }) {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="category"
                         type="text"
-                        required="required"
                     />
                 </div>
                 <div className="mb-4">
@@ -104,7 +113,6 @@ function CreatePost({ post }) {
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="publication_date"
                         type="date"
-                        required="required"
                     />
                 </div>
                 <div className="mb-4">
@@ -115,9 +123,17 @@ function CreatePost({ post }) {
                         ref={descriptionRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="description"
-                        required="required"
                     />
                 </div>
+
+                {errorMessage && (
+                    <div className="bg-red-100 border mb-4 border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <span className="block sm:inline">{errorMessage.split('\n').map((item, key) => {
+                            return <span key={key}>{item}<br/></span>
+                        })}</span>
+                    </div>
+                )}
+
                 <div className="flex items-center justify-between">
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
