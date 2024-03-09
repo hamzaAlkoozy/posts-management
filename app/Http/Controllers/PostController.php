@@ -11,7 +11,10 @@ class PostController extends Controller
 {
     public function index()
     {
-        return Auth::user()->posts;
+        // Page number is fetched by default using paginate()
+        $postsPerPage = 10;
+
+        return Post::where('user_id', Auth::id())->paginate($postsPerPage);
     }
 
     public function store(PostRequest $request)

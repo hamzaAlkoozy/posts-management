@@ -5,7 +5,8 @@ import PostItem from "../posts/PostItem";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
 
 const ViewPostPage = () => {
-    useConditionalRedirect('/login', true);
+    // TODO -hamza fix
+    // useConditionalRedirect('/login', true);
 
     const { id } = useParams();
     const [post, setPost] = useState(null);
