@@ -5,6 +5,7 @@ import useConditionalRedirect from "../helpers/useConditionalRedirect";
 
 function Register() {
     useConditionalRedirect('/', false);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const authContext = useContext(AuthContext);
     const navigate = useNavigate(); // Get the navigate function
@@ -47,6 +48,18 @@ function Register() {
         } else {
             // Handle errors here
             console.log('Registration failed:', data);
+            let errorString = '';
+            if (data.errors) {
+                for (let field in data.errors) {
+                    errorString += `${data.errors[field].join(', ')} \n`;
+                }
+            } else if (data.message) {
+                errorString = data.message;
+            }
+
+            console.log(data.errors);
+
+            setErrorMessage(errorString.trim());
         }
     };
 
@@ -97,6 +110,15 @@ function Register() {
                         type="password"
                     />
                 </div>
+
+                {errorMessage && (
+                    <div className="bg-red-100 border mb-4 border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <span className="block sm:inline">{errorMessage.split('\n').map((item, key) => {
+                            return <span key={key}>{item}<br/></span>
+                        })}</span>
+                    </div>
+                )}
+
                 <div className="flex items-center justify-between">
                     <button
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
