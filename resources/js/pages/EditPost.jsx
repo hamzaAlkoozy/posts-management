@@ -4,7 +4,8 @@ import CreatePost from './CreatePost';
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
 
 function EditPostPage() {
-    useConditionalRedirect('/login', true);
+    // TODO -hamza fix
+    // useConditionalRedirect('/login', true);
 
     const { id } = useParams();
     const [post, setPost] = useState(null);

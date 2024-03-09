@@ -3,7 +3,8 @@ import useConditionalRedirect from '../helpers/useConditionalRedirect';
 import {useNavigate} from "react-router-dom"
 
 function CreatePost({ post }) {
-    useConditionalRedirect('/login', true);
+    // TODO -hamza fix
+    // useConditionalRedirect('/login', true);
 
     const navigate = useNavigate();
 
