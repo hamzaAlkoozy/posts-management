@@ -1,37 +1,73 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import useConditionalRedirect from '../helpers/useConditionalRedirect';
 import {useNavigate} from "react-router-dom"
+import * as Yup from 'yup';
+
+const schema = Yup.object().shape({
+    title: Yup.string().required(),
+    category: Yup.string().required(),
+    publicationDate: Yup.date().required(),
+    description: Yup.string().required(),
+});
+
 
 function CreatePost({ post }) {
     // TODO -hamza fix
     // useConditionalRedirect('/login', true);
+
+    const [title, setTitle] = useState('');
+    const [category, setCategory] = useState('');
+    const [publicationDate, setPublicationDate] = useState('');
+    const [description, setDescription] = useState('');
+
     const [errorMessage, setErrorMessage] = useState(null);
 
     const navigate = useNavigate();
 
-    const titleRef = useRef();
-    const categoryRef = useRef();
-    const publicationDateRef = useRef();
-    const descriptionRef = useRef();
+
+    // client-side validation
+    // TODO -hamza refactor - code is duplicated between components
+
+    const validateInput = async (value, field) => {
+        let obj = {};
+        obj[field] = value;
+
+        try {
+            await schema.validateAt(field, obj); // validate the field
+            setErrorMessage(''); // if validation is successful, clear the error message
+
+            return true;
+        } catch (err) {
+            setErrorMessage(err.message); // if validation fails, set the error message
+
+            return false;
+        }
+    };
 
     // When modifying post - fill inputs with post values
     useEffect(() => {
         if (post) {
-            console.log(post);
-            titleRef.current.value = post.title;
-            categoryRef.current.value = post.category;
-            publicationDateRef.current.value = post.publication_date;
-            descriptionRef.current.value = post.description;
+            setTitle(post.title);
+            setCategory(post.category);
+            setPublicationDate(post.publication_date);
+            setDescription(post.description);
         }
     }, [post]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const title = titleRef.current.value;
-        const category = categoryRef.current.value;
-        const publication_date = publicationDateRef.current.value;
-        const description = descriptionRef.current.value;
+        // Only send request to API if client side validation succeed and no error messages found
+        // If one has an error message, it will stop the execution and not call the API
+        const notValidData =
+            !(await validateInput(title, 'title')) ||
+            !(await validateInput(category, 'category')) ||
+            !(await validateInput(publicationDate, 'publicationDate')) ||
+            !(await validateInput(description, 'description'));
+
+        if (notValidData) {
+            return; // return early if validation fails
+        }
 
         // Set the method and URL based on whether we're creating or editing a post
         const method = post ? 'PATCH' : 'POST';
@@ -49,7 +85,7 @@ function CreatePost({ post }) {
                 body: JSON.stringify({
                     title,
                     category,
-                    publication_date,
+                    publication_date: publicationDate,
                     description
                 })
             });
@@ -87,10 +123,14 @@ function CreatePost({ post }) {
                         Title
                     </label>
                     <input
-                        ref={titleRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="title"
                         type="text"
+                        value={title}
+                        onChange={(e) => {
+                            setTitle(e.target.value);
+                            validateInput(e.target.value, 'title');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -98,10 +138,14 @@ function CreatePost({ post }) {
                         Category
                     </label>
                     <input
-                        ref={categoryRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="category"
                         type="text"
+                        value={category}
+                        onChange={(e) => {
+                            setCategory(e.target.value);
+                            validateInput(e.target.value, 'category');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -109,10 +153,14 @@ function CreatePost({ post }) {
                         Publication Date
                     </label>
                     <input
-                        ref={publicationDateRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="publication_date"
                         type="date"
+                        value={publicationDate}
+                        onChange={(e) => {
+                            setPublicationDate(e.target.value);
+                            validateInput(e.target.value, 'publicationDate');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -120,9 +168,13 @@ function CreatePost({ post }) {
                         Description
                     </label>
                     <textarea
-                        ref={descriptionRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="description"
+                        value={description}
+                        onChange={(e) => {
+                            setDescription(e.target.value);
+                            validateInput(e.target.value, 'description');
+                        }}
                     />
                 </div>
 

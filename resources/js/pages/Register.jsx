@@ -1,27 +1,66 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from "../store/auth-context";
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
+import * as Yup from 'yup';
+
+
+// TODO -hamza fix password confirmation not working
+const schema = Yup.object().shape({
+    name: Yup.string().required(),
+    email: Yup.string().email().required(),
+    password: Yup.string().min(8).required(),
+    passwordConfirmation: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required(),
+});
+
 
 function Register() {
     useConditionalRedirect('/', false);
-    const [errorMessage, setErrorMessage] = useState(null);
 
     const authContext = useContext(AuthContext);
     const navigate = useNavigate(); // Get the navigate function
 
-    const nameRef = useRef();
-    const emailRef = useRef();
-    const passwordRef = useRef();
-    const passwordConfirmationRef = useRef();
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    // client-side validation
+    // TODO -hamza refactor - code is duplicated between components
+    const validateInput = async (value, field) => {
+        let obj = {};
+        obj[field] = value;
+
+        try {
+            await schema.validateAt(field, obj); // validate the field
+            setErrorMessage(''); // if validation is successful, clear the error message
+
+            return true;
+        } catch (err) {
+            setErrorMessage(err.message); // if validation fails, set the error message
+
+            return false;
+        }
+    };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const name = nameRef.current.value;
-        const email = emailRef.current.value;
-        const password = passwordRef.current.value;
-        const passwordConfirmation = passwordConfirmationRef.current.value;
+        // Only send request to API if client side validation succeed and no error messages found
+        // If one has an error message, it will stop the execution and not call the API
+        const notValidData =
+            !(await validateInput(name, 'name')) ||
+            !(await validateInput(email, 'email')) ||
+            !(await validateInput(password, 'password')) ||
+            !(await validateInput(passwordConfirmation, 'passwordConfirmation'));
+
+        if (notValidData) {
+            return; // return early if validation fails
+        }
 
         const response = await fetch('api/register', {
             method: 'POST',
@@ -71,10 +110,14 @@ function Register() {
                         Name
                     </label>
                     <input
-                        ref={nameRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="name"
                         type="text"
+                        value={name}
+                        onChange={(e) => {
+                            setName(e.target.value);
+                            validateInput(e.target.value, 'name');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -82,10 +125,14 @@ function Register() {
                         Email
                     </label>
                     <input
-                        ref={emailRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="email"
                         type="email"
+                        value={email}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            validateInput(e.target.value, 'email');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -93,10 +140,14 @@ function Register() {
                         Password
                     </label>
                     <input
-                        ref={passwordRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="password"
                         type="password"
+                        value={password}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                            validateInput(e.target.value, 'password');
+                        }}
                     />
                 </div>
                 <div className="mb-4">
@@ -104,10 +155,14 @@ function Register() {
                         Confirm Password
                     </label>
                     <input
-                        ref={passwordConfirmationRef}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="passwordConfirmation"
                         type="password"
+                        value={passwordConfirmation}
+                        onChange={(e) => {
+                            setPasswordConfirmation(e.target.value);
+                            validateInput(e.target.value, 'passwordConfirmation');
+                        }}
                     />
                 </div>
 

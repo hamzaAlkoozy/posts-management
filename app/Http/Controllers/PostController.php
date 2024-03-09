@@ -32,7 +32,7 @@ class PostController extends Controller
         return $post;
     }
 
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
         $this->authorize('update', $post);
 
