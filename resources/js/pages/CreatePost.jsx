@@ -1,10 +1,11 @@
-import React, { useEffect, useState} from 'react';
-import useConditionalRedirect from '../helpers/useConditionalRedirect';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom"
 import * as Yup from 'yup';
 
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Card from "../ui/Card";
+import {Helmet} from "react-helmet";
 
 const schema = Yup.object().shape({
     title: Yup.string().required(),
@@ -14,7 +15,7 @@ const schema = Yup.object().shape({
 });
 
 
-function CreatePost({ post }) {
+function CreatePost({post}) {
     // TODO -hamza fix
     // useConditionalRedirect('/login', true);
 
@@ -129,85 +130,97 @@ function CreatePost({ post }) {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center">
-            <form onSubmit={handleSubmit} className="w-1/2">
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                        Title
-                    </label>
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="title"
-                        type="text"
-                        value={title}
-                        onChange={(e) => {
-                            setTitle(e.target.value);
-                            validateInput(e.target.value, 'title');
-                        }}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-                        Category
-                    </label>
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="category"
-                        type="text"
-                        value={category}
-                        onChange={(e) => {
-                            setCategory(e.target.value);
-                            validateInput(e.target.value, 'category');
-                        }}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publication_date">
-                        Publication Date
-                    </label>
-                    <input
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="publication_date"
-                        type="date"
-                        value={publicationDate}
-                        onChange={(e) => {
-                            setPublicationDate(e.target.value);
-                            validateInput(e.target.value, 'publicationDate');
-                        }}
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                        Description
-                    </label>
-                    <textarea
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="description"
-                        value={description}
-                        onChange={(e) => {
-                            setDescription(e.target.value);
-                            validateInput(e.target.value, 'description');
-                        }}
-                    />
-                </div>
+        <>
+            <Helmet>
+                <title>{post ? 'Update Post' : 'Create Post'}</title>
+            </Helmet>
+            <Card className="w-full lg:w-3/4 mx-auto">
+                <div className="flex flex-col justify-center bg-gray-100">
+                    <h1 className="text-center text-2xl font-bold mb-4">
+                        {post ? 'Update Post' : 'Create Post'}
+                    </h1>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+                                Title
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="title"
+                                type="text"
+                                value={title}
+                                onChange={(e) => {
+                                    setTitle(e.target.value);
+                                    validateInput(e.target.value, 'title');
+                                }}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
+                                Category
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="category"
+                                type="text"
+                                value={category}
+                                onChange={(e) => {
+                                    setCategory(e.target.value);
+                                    validateInput(e.target.value, 'category');
+                                }}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publication_date">
+                                Publication Date
+                            </label>
+                            <input
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="publication_date"
+                                type="date"
+                                value={publicationDate}
+                                onChange={(e) => {
+                                    setPublicationDate(e.target.value);
+                                    validateInput(e.target.value, 'publicationDate');
+                                }}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+                                Description
+                            </label>
+                            <textarea
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="description"
+                                value={description}
+                                onChange={(e) => {
+                                    setDescription(e.target.value);
+                                    validateInput(e.target.value, 'description');
+                                }}
+                            />
+                        </div>
 
-                {errorMessage && (
-                    <div className="bg-red-100 border mb-4 border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        {errorMessage && (
+                            <div
+                                className="text-sm bg-red-100 border mb-4 border-red-400 text-red-700 px-3 py-2 rounded relative"
+                                role="alert">
                         <span className="block sm:inline">{errorMessage.split('\n').map((item, key) => {
                             return <span key={key}>{item}<br/></span>
                         })}</span>
-                    </div>
-                )}
+                            </div>
+                        )}
 
-                <div className="flex items-center justify-between">
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="submit">
-                        {post ? 'Update Post' : 'Create Post'}
-                    </button>
+                        <div className="flex items-center justify-between">
+                            <button
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                type="submit">
+                                {post ? 'Update Post' : 'Create Post'}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+            </Card>
+        </>
     );
 }
 

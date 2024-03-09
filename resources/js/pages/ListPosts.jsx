@@ -1,7 +1,9 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import PostList from "../posts/PostList";
 import {toast} from "react-toastify";
+
+import { Helmet } from 'react-helmet';
 
 function ListPostsPage() {
     // TODO -hamza fix
@@ -83,6 +85,10 @@ function ListPostsPage() {
 
     return (
         <>
+            <Helmet>
+                <title>List Posts</title>
+            </Helmet>
+
             <PostList posts={posts}/>
 
             <button

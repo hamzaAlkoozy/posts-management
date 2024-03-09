@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel 9 vite with react</title>
+    <title>Post Management</title>
     @viteReactRefresh
     @vite('resources/css/app.css')
     @vite('resources/js/index.jsx')
