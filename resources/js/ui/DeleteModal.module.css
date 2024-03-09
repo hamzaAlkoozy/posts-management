@@ -1,0 +1,39 @@
+.button {
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.button--delete {
+    background-color: #f56565;
+    color: white;
+}
+
+.button--delete:hover {
+    background-color: #c53030;
+}
+
+.button--cancel {
+    border: 2px solid white;
+    color: white;
+}
+
+.button--cancel:hover {
+    background-color: white;
+    color: black;
+}
+
+.modal {
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    background-color: white;
+    padding: 1rem;
+    text-align: center;
+    width: 30rem;
+    z-index: 10;
+    position: fixed;
+    top: 20vh;
+    left: calc(50% - 15rem);
+}

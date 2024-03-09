@@ -1,21 +1,24 @@
+import {useState, useEffect} from 'react';
+import { useParams } from 'react-router-dom';
+import CreatePost from './CreatePost';
 import useConditionalRedirect from "../helpers/useConditionalRedirect";
-import {useEffect, useState} from "react";
-import PostList from "../posts/PostList";
 
-function ListPostsPage() {
+function EditPostPage() {
     useConditionalRedirect('/login', true);
 
-    const [posts, setPosts] = useState([]);
+    const { id } = useParams();
+    const [post, setPost] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Fetch posts from API
+
     useEffect(() => {
         setIsLoading(true);
 
-        const fetchPosts = async () => {
+        // Fetch the post data from your API
+        const getPost = async () => {
             try {
                 const apiToken = localStorage.getItem('api-token');
-                const response = await fetch('/api/posts', {
+                const response = await fetch(`/api/posts/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -25,35 +28,30 @@ function ListPostsPage() {
                 });
 
                 if (response.ok) {
-                    // Post creation successful, navigate to list post
                     const data = await response.json();
-                    setPosts(data);
+                    setPost(data);
                     setIsLoading(false);
+                    // TODO -hamza return to view post page
                 } else {
-                    const data = await response.json();
+                    // Show error as message
                     // TODO -hamza client side validation - take error messages from response and show them
-                    // console.error('Error fetching posts data');
-                    console.error(data);
+                    const data = await response.json();
+                    console.error('Post edit failed', data);
                 }
             } catch (error) {
-                console.error('Error fetching posts data:', error);
+                console.error('An error occurred while creating the post:', error);
             }
         }
 
-        fetchPosts();
+        getPost();
 
-    }, []);
+    }, [id]);
 
     if (isLoading) {
-        return (
-            <div>
-                <p>Loading.....</p>
-            </div>
-        );
-    } else {
-        return <PostList posts={posts} />;
+        return <div>Loading...</div>;
     }
 
+    return <CreatePost post={post} />;
 }
 
-export default ListPostsPage;
+export default EditPostPage;

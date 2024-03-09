@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // TODO -hamza add these
-        //  title - category - publication_date - description
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('category');
-            $table->timestamp('publication_date');
+            $table->date('publication_date');
             $table->text('description');
             $table->timestamps();
         });

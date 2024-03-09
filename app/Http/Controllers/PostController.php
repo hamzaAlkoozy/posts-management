@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
@@ -10,18 +11,12 @@ class PostController extends Controller
 {
     public function index()
     {
-        return Post::all();
+        return Auth::user()->posts;
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'category' => 'required|max:255',
-            'publication_date' => 'required|date',
-            'description' => 'required',
-        ]);
-
+        $validatedData = $request->validated();
         $validatedData['user_id'] = Auth::id();
 
         return Post::create($validatedData);
@@ -29,6 +24,8 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $this->authorize('show', $post);
+
         return $post;
     }
 
@@ -36,13 +33,8 @@ class PostController extends Controller
     {
         $this->authorize('update', $post);
 
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'category' => 'required|max:255',
-            'publication_date' => 'required|date',
-            'description' => 'required',
-            'user_id' => 'required|exists:users,id'
-        ]);
+        $validatedData = $request->validated();
+        $validatedData['user_id'] = Auth::id();
 
         $post->update($validatedData);
         return $post;
