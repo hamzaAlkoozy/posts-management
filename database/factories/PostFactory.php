@@ -27,8 +27,7 @@ class PostFactory extends Factory
             'category' => $this->faker->word,
             'publication_date' => $this->faker->date,
             'description' => $this->faker->paragraph,
-            // TODO -hamza fix
-            'image' => $this->faker->imageUrl,
+            'image' => 'images/placeholder.jpeg',
 
             'user_id' => User::inRandomOrder()->first()->id
         ];

@@ -6,6 +6,8 @@ import * as Yup from 'yup';
 import {toast} from "react-toastify";
 import Card from "../ui/Card";
 import {Helmet} from "react-helmet";
+import FormInput from "../ui/FormInput";
+import ErrorMessage from "../ui/ErrorMessage";
 
 // TODO -hamza fix password confirmation not working
 const schema = Yup.object().shape({
@@ -124,76 +126,48 @@ function Register() {
                 <div className="flex flex-col justify-center bg-gray-100">
                     <h1 className="text-center text-2xl font-bold mb-4">Register account</h1>
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                                Name
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="name"
-                                type="text"
-                                value={name}
-                                onChange={(e) => {
-                                    setName(e.target.value);
-                                    validateInput(e.target.value, 'name');
-                                }}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                                Email
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="email"
-                                type="email"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    validateInput(e.target.value, 'email');
-                                }}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                                Password
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                    validateInput(e.target.value, 'password');
-                                }}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="passwordConfirmation">
-                                Confirm Password
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="passwordConfirmation"
-                                type="password"
-                                value={passwordConfirmation}
-                                onChange={(e) => {
-                                    setPasswordConfirmation(e.target.value);
-                                    validateInput(e.target.value, 'passwordConfirmation');
-                                }}
-                            />
-                        </div>
+                        <FormInput
+                            id="name"
+                            type="text"
+                            value={name}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                validateInput(e.target.value, 'name');
+                            }}
+                            label="Name"
+                        />
+                        <FormInput
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                validateInput(e.target.value, 'email');
+                            }}
+                            label="Email"
+                        />
+                        <FormInput
+                            id="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                validateInput(e.target.value, 'password');
+                            }}
+                            label="Password"
+                        />
+                        <FormInput
+                            id="passwordConfirmation"
+                            type="password"
+                            value={passwordConfirmation}
+                            onChange={(e) => {
+                                setPasswordConfirmation(e.target.value);
+                                validateInput(e.target.value, 'passwordConfirmation');
+                            }}
+                            label="Confirm Password"
+                        />
 
-                        {errorMessage && (
-                            <div
-                                className="text-sm bg-red-100 border mb-4 border-red-400 text-red-700 px-3 py-2 rounded relative"
-                                role="alert">
-                        <span className="block sm:inline">{errorMessage.split('\n').map((item, key) => {
-                            return <span key={key}>{item}<br/></span>
-                        })}</span>
-                            </div>
-                        )}
+                        {errorMessage && <ErrorMessage message={errorMessage}/>}
 
                         <div className="flex items-center justify-between">
                             <button

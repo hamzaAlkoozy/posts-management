@@ -4,10 +4,10 @@ import PostList from "../posts/PostList";
 import {toast} from "react-toastify";
 
 import {Helmet} from 'react-helmet';
+import useConditionalRedirect from "../helpers/useConditionalRedirect";
 
 function ListPostsPage() {
-    // TODO -hamza fix
-    // useConditionalRedirect('/login', true);
+    useConditionalRedirect('/login', true);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get('page');

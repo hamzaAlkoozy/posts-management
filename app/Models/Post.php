@@ -16,7 +16,14 @@ class Post extends Model
 
     public function getFullImageUrlAttribute()
     {
-        return $this->image ? asset('public/storage/' . $this->image) : null;
+        // when uploading an image, the name is hashed, so this condition is OK
+        if ($this->image === 'images/placeholder.jpeg') {
+            // Placeholder image is in the 'public/images' directory
+            return asset('public/' . $this->image);
+        } else {
+            // Uploaded images are in the 'public/storage/images' directory
+            return asset('public/storage/' . $this->image);
+        }
     }
 
     public function scopeWithSearch($query)
@@ -35,7 +42,11 @@ class Post extends Model
     {
         $sort = request()->sort;
         if ($sort && $sort !== "default") {
-            $query->orderBy($sort, 'asc');
+            if ($sort === 'title') {
+                $query->orderBy($sort, 'asc');
+            } else if ($sort === 'publication_date') {
+                $query->orderBy($sort, 'desc');
+            }
         }
 
         return $query;
