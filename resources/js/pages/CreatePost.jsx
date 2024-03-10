@@ -6,6 +6,10 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Card from "../ui/Card";
 import {Helmet} from "react-helmet";
+import useConditionalRedirect from "../helpers/useConditionalRedirect";
+import ErrorMessage from "../ui/ErrorMessage";
+import FormTextArea from "../ui/FormTextArea";
+import FormInput from "../ui/FormInput";
 
 const schema = Yup.object().shape({
     title: Yup.string().required(),
@@ -25,8 +29,7 @@ const schema = Yup.object().shape({
 
 
 function CreatePost({post}) {
-    // TODO -hamza fix
-    // useConditionalRedirect('/login', true);
+    useConditionalRedirect('/login', true);
 
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('');
@@ -159,91 +162,55 @@ function CreatePost({post}) {
                         {post ? 'Update Post' : 'Create Post'}
                     </h1>
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
-                                Title
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="title"
-                                type="text"
-                                value={title}
-                                onChange={(e) => {
-                                    setTitle(e.target.value);
-                                    validateInput(e.target.value, 'title');
-                                }}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="category">
-                                Category
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="category"
-                                type="text"
-                                value={category}
-                                onChange={(e) => {
-                                    setCategory(e.target.value);
-                                    validateInput(e.target.value, 'category');
-                                }}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publication_date">
-                                Publication Date
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="publication_date"
-                                type="date"
-                                value={publicationDate}
-                                onChange={(e) => {
-                                    setPublicationDate(e.target.value);
-                                    validateInput(e.target.value, 'publicationDate');
-                                }}
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="publication_date">
-                                Thumbnail
-                            </label>
-                            <input
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="image"
-                                type="file"
-                                onChange={(e) => {
-                                    setImage(e.target.files[0]);
-                                    validateInput(e.target.files[0], 'image');
-                                }}
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                                Description
-                            </label>
-                            <textarea
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="description"
-                                value={description}
-                                onChange={(e) => {
-                                    setDescription(e.target.value);
-                                    validateInput(e.target.value, 'description');
-                                }}
-                            />
-                        </div>
-
-                        {errorMessage && (
-                            <div
-                                className="text-sm bg-red-100 border mb-4 border-red-400 text-red-700 px-3 py-2 rounded relative"
-                                role="alert">
-                        <span className="block sm:inline">{errorMessage.split('\n').map((item, key) => {
-                            return <span key={key}>{item}<br/></span>
-                        })}</span>
-                            </div>
-                        )}
+                        <FormInput
+                            id="title"
+                            type="text"
+                            value={title}
+                            onChange={(e) => {
+                                setTitle(e.target.value);
+                                validateInput(e.target.value, 'title');
+                            }}
+                            label="Title"
+                        />
+                        <FormInput
+                            id="category"
+                            type="text"
+                            value={category}
+                            onChange={(e) => {
+                                setCategory(e.target.value);
+                                validateInput(e.target.value, 'category');
+                            }}
+                            label="Category"
+                        />
+                        <FormInput
+                            id="publication_date"
+                            type="date"
+                            value={publicationDate}
+                            onChange={(e) => {
+                                setPublicationDate(e.target.value);
+                                validateInput(e.target.value, 'publicationDate');
+                            }}
+                            label="Publication Date"
+                        />
+                        <FormInput
+                            id="image"
+                            type="file"
+                            onChange={(e) => {
+                                setImage(e.target.files[0]);
+                                validateInput(e.target.files[0], 'image');
+                            }}
+                            label="Thumbnail"
+                        />
+                        <FormTextArea
+                            id="description"
+                            value={description}
+                            onChange={(e) => {
+                                setDescription(e.target.value);
+                                validateInput(e.target.value, 'description');
+                            }}
+                            label="Description"
+                        />
+                        {errorMessage && <ErrorMessage message={errorMessage} />}
 
                         <div className="flex items-center justify-between">
                             <button

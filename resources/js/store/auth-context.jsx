@@ -2,22 +2,21 @@ import {createContext, useEffect, useState} from "react";
 
 const AuthContext = createContext({
     isAuthenticated: false,
-    login: () => {
-    },
-    logout: () => {
-    },
+    isLoading: true,
+    login: () => {},
+    logout: () => {},
 });
 
 export function AuthContextProvider(props) {
-    const initialState = false;
-    const [isAuthenticated, setIsAuthenticated] = useState(initialState);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // TODO -hamza fix - if loggedin isAuthenticated is false on visiting /create-post
     useEffect(() => {
         const token = localStorage.getItem('api-token');
         if (token) {
             setIsAuthenticated(true);
         }
+        setIsLoading(false);
     }, []);
 
     function loginHandler() {
@@ -31,6 +30,7 @@ export function AuthContextProvider(props) {
 
     const context = {
         isAuthenticated: isAuthenticated,
+        isLoading: isLoading,
         login: loginHandler,
         logout: logoutHandler,
     };

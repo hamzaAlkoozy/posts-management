@@ -5,8 +5,7 @@ import useConditionalRedirect from "../helpers/useConditionalRedirect";
 import {toast} from "react-toastify";
 
 function EditPostPage() {
-    // TODO -hamza fix
-    // useConditionalRedirect('/login', true);
+    useConditionalRedirect('/login', true);
 
     const { id } = useParams();
     const [post, setPost] = useState(null);
@@ -33,7 +32,6 @@ function EditPostPage() {
                     const data = await response.json();
                     setPost(data);
                     setIsLoading(false);
-                    // TODO -hamza return to view post page
                 } else {
                     toast.error('Unable to edit the post. Please try again.', {
                         position: "top-center",

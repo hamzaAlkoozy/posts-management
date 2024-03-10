@@ -7,8 +7,7 @@ import {toast} from "react-toastify";
 import {Helmet} from "react-helmet";
 
 const ViewPostPage = () => {
-    // TODO -hamza fix
-    // useConditionalRedirect('/login', true);
+    useConditionalRedirect('/login', true);
 
     const { id } = useParams();
     const [post, setPost] = useState(null);
@@ -55,7 +54,6 @@ const ViewPostPage = () => {
     }
     // View
     if (isLoading) {
-        // TODO -hamza show spinner instead
         return <div>Loading...</div>;
     }
 
