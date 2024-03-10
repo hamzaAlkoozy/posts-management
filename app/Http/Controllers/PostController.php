@@ -14,7 +14,10 @@ class PostController extends Controller
         // Page number is fetched by default using paginate()
         $postsPerPage = 10;
 
-        return Post::where('user_id', Auth::id())->paginate($postsPerPage);
+        return Post::where('user_id', Auth::id())
+            ->withSearch()
+            ->withSort()
+            ->paginate($postsPerPage);
     }
 
     public function show(Post $post)

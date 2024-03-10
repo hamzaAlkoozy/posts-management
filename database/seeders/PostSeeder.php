@@ -12,6 +12,7 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
+        // TODO -hamza image is required - input anything in image
         Post::factory(1000)->create();
     }
 }

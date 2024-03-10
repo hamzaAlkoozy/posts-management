@@ -1,21 +1,29 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import PostList from "../posts/PostList";
 import {toast} from "react-toastify";
 
-import { Helmet } from 'react-helmet';
+import {Helmet} from 'react-helmet';
 
 function ListPostsPage() {
     // TODO -hamza fix
     // useConditionalRedirect('/login', true);
-    const navigate = useNavigate();
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get('page');
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(Number(page) || 1);
     const [totalPages, setTotalPages] = useState(0);
+
+    // Handle when user sort, search, or paginate
+    function handleSearch(field, newValue) {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set(field, newValue);
+
+        setSearchParams(newSearchParams);
+
+    }
 
     useEffect(() => {
         setCurrentPage(Number(page) || 1);
@@ -28,7 +36,7 @@ function ListPostsPage() {
         const fetchPosts = async () => {
             try {
                 const apiToken = localStorage.getItem('api-token');
-                const response = await fetch(`/api/posts?page=${currentPage}`, {
+                const response = await fetch(`/api/posts?${searchParams}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -60,28 +68,7 @@ function ListPostsPage() {
 
         fetchPosts();
 
-    }, [currentPage]);
-
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-        navigate(`?page=${newPage}`)
-    }
-
-    if (isLoading) {
-        return (
-            <div>
-                <p>Loading.....</p>
-            </div>
-        );
-    }
-
-    if (posts.length === 0) {
-        return (
-            <div>
-                <p>There are no posts</p>
-            </div>
-        );
-    }
+    }, [searchParams]);
 
     return (
         <>
@@ -89,22 +76,60 @@ function ListPostsPage() {
                 <title>List Posts</title>
             </Helmet>
 
-            <PostList posts={posts}/>
+            <div className={` mb-4 w-1/2 mx-auto grid grid-cols-6 gap-2`}>
+                <div className="col-span-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                        Search
+                    </label>
+                    <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        onChange={e => handleSearch('search', e.target.value)}
+                    />
+                </div>
+                <div className="col-span-2">
+                    <div className="col-span-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Sort
+                        </label>
+                        <select
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            onChange={e => handleSearch('sort', e.target.value)}>
+                            <option value='default'>Default</option>
+                            <option value='title'>Title (A-Z)</option>
+                            <option value='publication_date'>Date (latest)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            {!isLoading ? (
+                    posts.length > 0 ?
+                        <>
+                            <PostList posts={posts}/>
 
-            <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className={`mx-2 text-white py-2 px-4 rounded ${currentPage === 1 ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'}`}
-            >
-                Previous
-            </button>
-            <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className={`mx-2 text-white py-2 px-4 rounded ${currentPage === totalPages ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'}`}
-            >
-                Next
-            </button>
+                            <button
+                                onClick={() => handleSearch('page', currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className={`mx-2 text-white py-2 px-4 rounded ${currentPage === 1 ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'}`}
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => handleSearch('page', currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className={`mx-2 text-white py-2 px-4 rounded ${currentPage === totalPages ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'}`}
+                            >
+                                Next
+                            </button>
+                        </>
+                        :
+
+                        <div>
+                            <p>There are no posts</p>
+                        </div>
+                )
+                :
+                <p className="mx-auto">Loading ....</p>
+            }
         </>
     );
 
