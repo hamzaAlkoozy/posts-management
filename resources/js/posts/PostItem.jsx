@@ -55,8 +55,8 @@ function PostItem ({ item, showViewButton = true, showDescription = false }) {
     }
 
     return (
-        <Card className="w-full sm:w-3/4 mb-10 p-4 ">
-            <div key={item.id} className="flex">
+        <Card className="w-full sm:w-3/4 mb-10 p-4">
+            <div key={item.id} className="flex flex-col md:flex-row ">
                 <img
                     src={item.full_image_url}
                     alt={item.title}
