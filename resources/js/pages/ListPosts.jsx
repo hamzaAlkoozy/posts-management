@@ -76,7 +76,7 @@ function ListPostsPage() {
                 <title>List Posts</title>
             </Helmet>
 
-            <div className={` mb-4 w-1/2 mx-auto grid grid-cols-6 gap-2`}>
+            <div className={`flex flex-col md:flex-row mb-4 w-1/2 mx-auto gap-2`}>
                 <div className="col-span-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2">
                         Search
